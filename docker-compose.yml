@@ -1,0 +1,22 @@
+# Base de datos de PielClinic dentro de Docker (PostgreSQL 16) con los datos de demostración.
+# Es solo para la demostración de clase: las contraseñas de abajo son simples a propósito.
+services:
+  db:
+    image: postgres:16
+    container_name: pielclinic-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pielclinic
+      POSTGRES_PASSWORD: pielclinic123
+      POSTGRES_DB: pielclinic
+    ports:
+      # 5433 afuera, 5432 adentro: así no choca con el PostgreSQL que ya está instalado en el computador.
+      - "5433:5432"
+    volumes:
+      # Aquí Docker guarda los datos para que no se pierdan al apagar el contenedor.
+      - pgdata:/var/lib/postgresql/data
+      # Todo lo que haya en ./init se ejecuta UNA sola vez, en orden alfabético, cuando se crea la base por primera vez.
+      - ./init:/docker-entrypoint-initdb.d
+
+volumes:
+  pgdata:
